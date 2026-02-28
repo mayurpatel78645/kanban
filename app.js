@@ -1,8 +1,8 @@
-
+let tempId = crypto.randomUUID();
 state = {
   tasks: [
     {
-      id : 1,
+      id : tempId,
       title: 'get to work',
       status: 'todo'
     },
@@ -56,17 +56,32 @@ function createTasks() {
   }
 }
 
+function handleTodoTasks(e) {
+  let event = e.target;
+  if (event.classList.contains('delete-button')) {
+    let element = event.closest('.task-card');
+    let elementId = element.dataset.id;
+    
+    state.tasks = state.tasks.filter((task) => {
+      return task.id !== elementId;
+    });
+    render();
+  }
+}
+
 function render() {
   clearTasks();
 
   state.tasks.forEach(element => {
     let newTask = document.createElement('div');
+    newTask.className = 'task-card';
     appendTasks(element, 'todo', todoTasks, newTask);
     appendTasks(element, 'done', doneTasks, newTask);
     appendTasks(element, 'in-progress', inProgressTasks, newTask);
   });
 }
 
+todoTasks.addEventListener('click', handleTodoTasks);
 addTaskButton.addEventListener('click', createTasks);
 
 render();
