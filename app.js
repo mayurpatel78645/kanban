@@ -15,6 +15,7 @@ let inProgressTasks = document.querySelector('.in-progress-tasks');
 let inputField = document.querySelector('.input-field');
 let addTaskButton = document.querySelector('.add-task-button');
 let container = document.querySelector('.container');
+let statusArr = ['todo', 'in-progress', 'done'];
 
 function clearTasks() {
   todoTasks.replaceChildren();
@@ -22,23 +23,31 @@ function clearTasks() {
   inProgressTasks.replaceChildren();
 }
 
-function appendTasks(element, str, taskContainer, newTask) {
+function createTaskCard(task) {
+  let newTask = document.createElement('div');
   let deleteButton = document.createElement('button');
   let moveButton = document.createElement('button');
   let title = document.createElement('h2');
-  deleteButton.innerHTML = 'X';
+  newTask.className = 'task-card';
   deleteButton.className = 'delete-button';
-  moveButton.innerHTML = 'move-->';
   moveButton.className = 'move-button';
+  deleteButton.innerHTML = 'X';
+  moveButton.innerHTML = 'move-->';
+  title.innerHTML = task.title;
+  newTask.dataset.id = task.id;
+  newTask.appendChild(title);
+  newTask.appendChild(deleteButton);
+  newTask.appendChild(moveButton);
+  return newTask;
+}
 
-  title.innerHTML = element.title;
-  if (element.status === str){
-    newTask.dataset.id = element.id;
-    newTask.appendChild(title);
-    newTask.appendChild(deleteButton);
-    newTask.appendChild(moveButton);
-    taskContainer.appendChild(newTask);
+function getColumnByStatus(status) {
+  const columns = {
+    'todo': todoTasks,
+    'in-progress': inProgressTasks,
+    'done': doneTasks,
   }
+  return columns[status];
 }
 
 function isEmptyStr(str) {
@@ -72,7 +81,6 @@ function handleClick(e) {
     });
     render();
   } else if (event.classList.contains('move-button')) {
-    let statusArr = ['todo', 'in-progress', 'done'];
     let element = event.closest('.task-card');
     let elementId = element.dataset.id;
     
@@ -99,12 +107,10 @@ function handleClick(e) {
 function render() {
   clearTasks();
 
-  state.tasks.forEach(element => {
-    let newTask = document.createElement('div');
-    newTask.className = 'task-card';
-    appendTasks(element, 'todo', todoTasks, newTask);
-    appendTasks(element, 'done', doneTasks, newTask);
-    appendTasks(element, 'in-progress', inProgressTasks, newTask);
+  state.tasks.forEach(task => {
+    const card = createTaskCard(task);
+    const column = getColumnByStatus(task.status);
+    column.appendChild(card);
   });
 }
 
