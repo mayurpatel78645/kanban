@@ -22,8 +22,16 @@ function clearTasks() {
 }
 
 function appendTasks(element, str, taskContainer, newTask) {
+  let deleteButton = document.createElement('button');
+  let title = document.createElement('h2');
+  deleteButton.innerHTML = 'X';
+  deleteButton.className = 'delete-button';
+
+  title.innerHTML = element.title;
   if (element.status === str){
-    newTask.innerHTML = element.title;
+    newTask.dataset.id = element.id;
+    newTask.appendChild(title);
+    newTask.appendChild(deleteButton);
     taskContainer.appendChild(newTask);
   }
 }
