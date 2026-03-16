@@ -1,13 +1,19 @@
 let tempId = crypto.randomUUID();
-state = {
-  tasks: [
-    {
-      id : tempId,
-      title: 'get to work',
-      status: 'todo'
-    },
-  ]
+
+let state = {
+  tasks: []
 };
+
+async function loadTasks() {
+
+  const response = await fetch("api/get_tasks.php");
+
+  const tasks = await response.json();
+
+  state.tasks = tasks;
+
+  render();
+}
 
 let todoTasks = document.querySelector('.todo-tasks');
 let doneTasks = document.querySelector('.done-tasks');
@@ -54,7 +60,7 @@ function isEmptyStr(str) {
   return !str || str.trim().length === 0;
 }
 
-function createTasks() {
+async function createTasks() {
   let inputValue = inputField.value;
   if (isEmptyStr(inputValue)) {
     alert("Please enter a task!");
@@ -64,43 +70,54 @@ function createTasks() {
     title: inputValue, 
     status: 'todo',
     };
-    state.tasks.push(task);
+    await fetch("api/add_task.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(task)
+  });
+    //state.tasks.push(task);
     inputField.value = '';
-    render();
+    //render();
+    loadTasks();
   }
 }
 
-function handleClick(e) {
+async function handleClick(e) {
   let event = e.target;
   if (event.classList.contains('delete-button')) {
     let element = event.closest('.task-card');
     let elementId = element.dataset.id;
-    
-    state.tasks = state.tasks.filter((task) => {
-      return task.id !== elementId;
+    await fetch("api/delete_task.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ id: elementId })
     });
-    render();
-  } else if (event.classList.contains('move-button')) {
+    loadTasks();
+  }
+  else if (event.classList.contains('move-button')) {
     let element = event.closest('.task-card');
     let elementId = element.dataset.id;
-    
-    state.tasks = state.tasks.map((task) => {
-      let statusIndex = statusArr.indexOf(task.status);
-      if (statusIndex === -1) {
-        return task;
-      }
-      if (task.id === elementId) {
-        if (statusIndex < statusArr.length - 1) {
-          const nextStatus = statusArr[statusIndex + 1];
-          return {...task, status: nextStatus};
-        }else {
-          return task;
-        }
-      } else {
-        return task;
-      }
+    let task = state.tasks.find(t => t.id === elementId);
+    let statusIndex = statusArr.indexOf(task.status);
+    if (statusIndex === -1 || statusIndex === statusArr.length - 1) {
+      return;
+    }
+    const nextStatus = statusArr[statusIndex + 1];
+    await fetch("api/update_status.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id: elementId,
+        status: nextStatus
+      })
     });
-    render();
+    loadTasks();
   }
 }
 
@@ -117,4 +134,5 @@ function render() {
 container.addEventListener('click', handleClick);
 addTaskButton.addEventListener('click', createTasks);
 
-render();
+//render();
+loadTasks();
