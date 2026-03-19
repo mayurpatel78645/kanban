@@ -28,23 +28,63 @@ function clearTasks() {
   doneTasks.replaceChildren();
   inProgressTasks.replaceChildren();
 }
-
 function createTaskCard(task) {
   let newTask = document.createElement('div');
   let deleteButton = document.createElement('button');
   let moveButton = document.createElement('button');
   let title = document.createElement('h2');
+
   newTask.className = 'task-card';
+  newTask.dataset.id = task.id;
   deleteButton.className = 'delete-button';
   moveButton.className = 'move-button';
   deleteButton.innerHTML = 'X';
-  moveButton.innerHTML = 'move-->';
+  moveButton.innerHTML = '→';
   title.innerHTML = task.title;
-  newTask.dataset.id = task.id;
+  title.className = "task-title";
+
+  title.addEventListener('dblclick', () => {
+    let input = document.createElement('input');
+    input.value = task.title;
+    input.className = "edit-input";
+    newTask.replaceChild(input, title);
+    input.focus();
+    input.addEventListener('blur', () => saveEdit(input, task.id));
+    input.addEventListener('keydown', (e) => {
+      if (e.key === "Enter") {
+        saveEdit(input, task.id);
+      }
+    });
+  });
+
+  let buttonRow = document.createElement('div');
+
+  buttonRow.className = "button-row";
+  buttonRow.appendChild(moveButton);
+  buttonRow.appendChild(deleteButton);
   newTask.appendChild(title);
-  newTask.appendChild(deleteButton);
-  newTask.appendChild(moveButton);
+  newTask.appendChild(buttonRow);
+
   return newTask;
+}
+
+async function saveEdit(input, id) {
+  let newTitle = input.value.trim();
+
+  if (!newTitle) return loadTasks();
+
+  await fetch("api/update_task.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id: id,
+      title: newTitle
+    })
+  });
+
+  loadTasks();
 }
 
 function getColumnByStatus(status) {
@@ -124,15 +164,29 @@ async function handleClick(e) {
 function render() {
   clearTasks();
 
+  let counts = {
+    todo: 0,
+    "in-progress": 0,
+    done: 0
+  };
+
   state.tasks.forEach(task => {
+    counts[task.status]++;
     const card = createTaskCard(task);
     const column = getColumnByStatus(task.status);
     column.appendChild(card);
   });
+
+  document.querySelector('.todo-container h1').innerText = `ToDo (${counts.todo})`;
+  document.querySelector('.in-progress-container h1').innerText = `In Progress (${counts["in-progress"]})`;
+  document.querySelector('.done-container h1').innerText = `Done (${counts.done})`;
+
+  if (state.tasks.length === 0) {
+    todoTasks.innerHTML = "<p>No tasks yet</p>";
+  }
 }
 
 container.addEventListener('click', handleClick);
 addTaskButton.addEventListener('click', createTasks);
 
-//render();
 loadTasks();
