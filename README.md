@@ -1,172 +1,192 @@
-# 🗂️ Kanban Board (Vanilla JS)
+# 🗂️ Kanban Board (Full-Stack Web Application)
 
-A fully functional Kanban board built using **HTML, CSS, and Vanilla JavaScript**, designed to practice deep DOM manipulation and state-driven UI architecture — without any frameworks.
-
-This project follows a **React-style mental model**, where:
-
-> UI is always derived from state.
+A full-stack Kanban Board built using **HTML, CSS, JavaScript, PHP, and MySQL**.  
+This application allows users to manage tasks across different stages with persistent database storage.
 
 ---
 
-## 🚀 Live Features
+## 🚀 Features
 
-* ✅ Add tasks
-* ✅ Delete tasks
-* ✅ Move tasks across columns (Todo → In Progress → Done)
-* ✅ Immutable state updates
-* ✅ Event delegation
-* ✅ Clean component-style DOM architecture
-* ✅ Fully responsive layout
+### ✅ Core Features
+- Add new tasks
+- Delete tasks
+- Move tasks (Todo → In Progress → Done)
+- Persistent storage using MySQL
+
+### ⭐ Advanced Features
+- Edit tasks (double-click to modify)
+- Dynamic task count per column
+- Responsive UI
+- Clean and modern design
 
 ---
 
-## 🧠 Architecture Philosophy
+## 🧠 How It Works
 
-This project was intentionally built to mimic how modern frameworks like **React** think internally.
+The application follows a **client-server architecture**:
 
-Key architectural principles used:
-
-### 1️⃣ Single Source of Truth
-
-All tasks are stored in one central `state` object.
-
-```js
-state = {
-  tasks: []
-}
 ```
 
-The DOM never stores truth.
-The UI is always rebuilt from state.
+Frontend (JavaScript)
+↓
+Fetch API
+↓
+PHP Backend (API)
+↓
+MySQL Database
+↓
+JSON Response
+↓
+UI Re-render
 
----
-
-### 2️⃣ Immutable State Updates
-
-* `filter()` for deleting tasks
-* `map()` for updating task status
-* No direct mutation of objects
-
-Example:
-
-```js
-state.tasks = state.tasks.map(task =>
-  task.id === id
-    ? { ...task, status: 'in-progress' }
-    : task
-);
 ```
 
-This mirrors how React state updates work.
+- The frontend sends requests using `fetch()`
+- PHP handles the request and interacts with MySQL
+- Data is returned in JSON format
+- UI updates dynamically based on state
 
 ---
 
-### 3️⃣ Single Render Function
+## 🛠️ Tech Stack
 
-All UI rendering happens inside:
+### Frontend
+- HTML5
+- CSS3 (Flexbox & Grid)
+- JavaScript (ES6, DOM, Fetch API)
 
-```js
-render()
-```
+### Backend
+- PHP
+- MySQL
+- XAMPP
 
-The render process:
-
-1. Clears columns
-2. Loops through state
-3. Creates task cards
-4. Appends to correct column
-
-This ensures:
-
-> UI = f(state)
-
----
-
-### 4️⃣ Component-Style DOM Creation
-
-Each task is created via:
-
-```js
-createTaskCard(task)
-```
-
-This simulates how React components return UI elements.
-
----
-
-### 5️⃣ Event Delegation
-
-Instead of attaching many event listeners:
-
-```js
-container.addEventListener('click', handleClick);
-```
-
-All actions (delete & move) are handled centrally.
-
-This improves performance and scalability.
-
----
-
-## 🛠️ Technologies Used
-
-* HTML5
-* CSS3 (Grid + Flexbox)
-* Vanilla JavaScript (ES6+)
-
-No libraries. No frameworks. Pure fundamentals.
+### Tools
+- Git & GitHub
 
 ---
 
 ## 📂 Project Structure
 
 ```
+
 kanban/
 │
 ├── index.html
 ├── style.css
 ├── app.js
+├── db.php
+│
+├── api/
+│   ├── get_tasks.php
+│   ├── add_task.php
+│   ├── delete_task.php
+│   ├── update_status.php
+│   └── update_task.php
+│
 └── README.md
+
+````
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/mayurpatel78645/kanban.git
+````
+
+### 2️⃣ Move project to XAMPP
+
+Place the folder inside:
+
+```
+xampp/htdocs/
+```
+
+### 3️⃣ Start XAMPP
+
+* Start Apache
+* Start MySQL
+
+### 4️⃣ Create Database
+
+Open phpMyAdmin and create:
+
+```
+Database: kanban_db
+Table: tasks
+```
+
+### Table structure:
+
+| Field  | Type        |
+| ------ | ----------- |
+| id     | VARCHAR(36) |
+| title  | TEXT        |
+| status | VARCHAR(20) |
+
+---
+
+### 5️⃣ Run the project
+
+```
+http://localhost/kanban
 ```
 
 ---
 
-## 🎯 What This Project Demonstrates
+## 🎯 Key Concepts Demonstrated
 
-* Deep understanding of DOM manipulation
-* Event bubbling & delegation
-* Immutable state logic
-* Functional array methods (`map`, `filter`)
-* Component-style UI thinking
-* Clean separation of concerns
-
-This project was built as preparation for transitioning into React.
+* DOM Manipulation
+* Event Delegation
+* State-driven UI
+* Fetch API (AJAX)
+* PHP API development
+* MySQL CRUD operations
+* Full-stack integration
 
 ---
 
-## 📈 Possible Improvements
+## 📈 Future Improvements
 
-* Drag and drop functionality
-* Task editing
-* LocalStorage persistence
-* Dark mode toggle
-* Animation when moving tasks
-* Backend integration
+* Drag & drop tasks
+* User authentication
+* Task priorities
+* Deadlines and reminders
+* Cloud deployment
 
 ---
 
 ## 💡 Why This Project Matters
 
-Instead of relying on frameworks, this Kanban board was built to:
+This project was built to:
 
-* Master core JavaScript
-* Understand rendering cycles
-* Practice state-driven UI design
+* Understand how frontend and backend communicate
+* Practice real-world CRUD operations
+* Simulate modern web application architecture
+* Prepare for frameworks like React
 
-Frameworks become much easier once these fundamentals are solid.
+---
+
+## 👨‍💻 Author
+
+**Mayur Patel**
+🔗 GitHub: [https://github.com/mayurpatel78645](https://github.com/mayurpatel78645)
+
+---
+
+## 📸 Preview
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0f8a5298-b5f0-47a0-8fa9-c7d5cd51ec38" width="800"/>
+</p>
 
 ---
 
 ## 📜 License
 
-Open-source. Free to use and modify.
+This project is open-source and available for learning and development purposes.
+
+````
+
